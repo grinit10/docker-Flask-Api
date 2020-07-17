@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 import os
+
+from models.Db_Init import db
+from models.Planet import Planet
+from models.User import User
 
 app: Flask = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -18,7 +20,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 app.config['JWT_SECRET_KEY'] = 'super-secret'
 
-db = SQLAlchemy()
 db.init_app(app)
 ma = Marshmallow(app)
 jwt = JWTManager(app)
@@ -198,24 +199,24 @@ def login():
 
 
 # database models
-class User(db.Model):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    email = Column(String, unique=True)
-    password = Column(String)
+# class User(db.Model):
+#     __tablename__ = 'users'
+#     id = Column(Integer, primary_key=True)
+#     first_name = Column(String)
+#     last_name = Column(String)
+#     email = Column(String, unique=True)
+#     password = Column(String)
 
 
-class Planet(db.Model):
-    __tablename__ = 'planets'
-    id = Column(Integer, primary_key=True)
-    planet_name = Column(String)
-    planet_type = Column(String)
-    home_star = Column(String)
-    mass = Column(Float)
-    radius = Column(Float)
-    distance = Column(Float)
+# class Planet(db.Model):
+#     __tablename__ = 'planets'
+#     id = Column(Integer, primary_key=True)
+#     planet_name = Column(String)
+#     planet_type = Column(String)
+#     home_star = Column(String)
+#     mass = Column(Float)
+#     radius = Column(Float)
+#     distance = Column(Float)
 
 
 class UserSchema(ma.Schema):
