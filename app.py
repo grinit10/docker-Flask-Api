@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify
-from flask_marshmallow import Marshmallow
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 import os
 
 from models.Db_Init import db
-from models.Planet import Planet
+from models.Planet import Planet, planet_schema, planets_schema
 from models.User import User
 
 app: Flask = Flask(__name__)
@@ -21,7 +20,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 app.config['JWT_SECRET_KEY'] = 'super-secret'
 
 db.init_app(app)
-ma = Marshmallow(app)
 jwt = JWTManager(app)
 
 
@@ -198,41 +196,5 @@ def login():
                }, 401
 
 
-# database models
-# class User(db.Model):
-#     __tablename__ = 'users'
-#     id = Column(Integer, primary_key=True)
-#     first_name = Column(String)
-#     last_name = Column(String)
-#     email = Column(String, unique=True)
-#     password = Column(String)
-
-
-# class Planet(db.Model):
-#     __tablename__ = 'planets'
-#     id = Column(Integer, primary_key=True)
-#     planet_name = Column(String)
-#     planet_type = Column(String)
-#     home_star = Column(String)
-#     mass = Column(Float)
-#     radius = Column(Float)
-#     distance = Column(Float)
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'first_name', 'last_name', 'email', 'password')
-
-
-class PlanetSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'planet_name', 'planet_type', 'home_star', 'mass', 'radius', 'distance')
-
-
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-planet_schema = PlanetSchema()
-planets_schema = PlanetSchema(many=True)
-
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
