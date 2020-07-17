@@ -10,6 +10,7 @@ class User(db.Model):
     last_name = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
+    country = Column(String)
 
 
 class UserSchema(Schema):

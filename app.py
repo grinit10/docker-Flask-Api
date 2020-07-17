@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
+from flask_migrate import Migrate
 import os
 
 from models.Db_Init import db
@@ -20,6 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 app.config['JWT_SECRET_KEY'] = 'super-secret'
 
 db.init_app(app)
+migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
 
@@ -27,6 +29,12 @@ jwt = JWTManager(app)
 def db_create():
     db.create_all()
     print('Database created')
+
+
+@app.cli.command('db_update')
+def db_update():
+    db.update(User)
+    print('Database updated')
 
 
 @app.cli.command('db_drop')

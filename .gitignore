@@ -5,3 +5,7 @@
 /.idea
 /.vs
 /__pycache__
+/flask-venv
+/migrations/versions/__pycache__
+/migrations/__pycache__
+/models/__pycache__
