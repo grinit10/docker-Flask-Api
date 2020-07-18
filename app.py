@@ -3,23 +3,15 @@ from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 from flask_migrate import Migrate
 import os
 
+from .config import config_by_name
 from models.Db_Init import db
 from models.Planet import Planet, planet_schema, planets_schema
 from models.User import User
 
 app: Flask = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-POSTGRES = {
-    'user': 'joawacuu',
-    'pw': 'nO6bXEfp53qlAxwWlk52ZxfqLflRcZno',
-    'db': 'joawacuu',
-    'host': 'rosie.db.elephantsql.com',
-    'port': '5432',
-}
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
-%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
-app.config['JWT_SECRET_KEY'] = 'super-secret'
 
+app.config.from_object(config_by_name[os.getenv('BOILERPLATE_ENV') or 'dev'])
 db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
@@ -99,6 +91,7 @@ def url_variables(age: int, name: str):
 
 
 @app.route('/planets', methods=['GET'])
+@jwt_required
 def list_planets():
     planets = Planet.query.all()
     result = planets_schema.dump(planets)
@@ -106,6 +99,7 @@ def list_planets():
 
 
 @app.route('/planets/<int:id>', methods=['GET'])
+@jwt_required
 def get_planet(id: int):
     planet = Planet.query.filter_by(id=id).first()
     if planet:
@@ -162,7 +156,6 @@ def update_planet():
 
 
 @app.route('/register', methods=['POST'])
-@jwt_required
 def register():
     email = request.form['email']
     existing_user = User.query.filter_by(email=email).first()
