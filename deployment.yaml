@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
       - name: flask-planets-api
-        image: flask-planets-api:latest
-        imagePullPolicy: Never
+        image: gcr.io/learning-project-284206/flask-planets-api:latest
+#        image: flask-planets-api:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000

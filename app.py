@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 from flask_migrate import Migrate
 import os
 
-from .config import config_by_name
+from config import config_by_name
 from models.Db_Init import db
 from models.Planet import Planet, planet_schema, planets_schema
 from models.User import User
