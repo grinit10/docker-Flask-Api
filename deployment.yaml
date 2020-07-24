@@ -1,35 +1,45 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: flask-planets-api-service
-spec:
-  selector:
-    app: flask-planets-api
-  ports:
-  - protocol: "TCP"
-    port: 6001
-    targetPort: 5000
-  type: LoadBalancer
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-planets-api
+  namespace: default
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: flask-planets-api
-  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: flask-planets-api
     spec:
       containers:
-      - name: flask-planets-api
-        image: gcr.io/learning-project-284206/flask-planets-api:latest
-#        image: flask-planets-api:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
+        - image: gcr.io/learning-project-284206/github.com/grinit10/docker-flask-api
+          imagePullPolicy: Always
+          name: flask-planets-api
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-planets-api-service
+  namespace: default
+spec:
+  clusterIP: 10.11.246.223
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 31455
+      port: 6001
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: flask-planets-api
+  sessionAffinity: None
+  type: LoadBalancer
